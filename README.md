@@ -6,8 +6,59 @@ communicate with and control a Crazyflie quadcopter. For instance the [cfclient]
 
 See [below](#platform-notes) for platform specific instruction.
 For more info see our [wiki](http://wiki.bitcraze.se/ "Bitcraze Wiki").
+---
+### Linux
 
+#### Setting udev permissions
 
+The following steps make it possible to use the USB Radio without being root.
+```
+sudo groupadd plugdev
+sudo usermod -a -G plugdev <username>
+```
+Create a file named ```/etc/udev/rules.d/99-crazyradio.rules``` and add the
+following:
+```
+SUBSYSTEM=="usb", ATTRS{idVendor}=="1915", ATTRS{idProduct}=="7777", MODE="0664", GROUP="plugdev"
+```
+#### Wireless Setup for PX4 Connection
+Connecting via MAVLink:
+* Download the crazyflie-lib-python source code:
+Git Clone this project
+* Build a virtual environment (local python environment) with package dependencies using the following method:
+```sh
+  pip install tox --user
+```
+* Navigate to the crazyflie-lib-python folder and type:
+```sh
+  make venv
+```
+* Activate the virtual environment:
+```sh
+  source venv-cflib/bin/activate
+```
+* Install required dependencies:
+```sh
+  pip install -r requirements.txt --user
+```
+To connect Crazyflie 2.0 with crazyradio, launch cfbridge by following these steps:
+
+* Power off and power on Crazyflie 2.0 and wait for it to boot up.
+* Connect a Crazyflie radio device via USB.
+* Navigate to the crazyflie-lib-python folder.
+* Activate the environment:
+```sh
+source venv-cflib/bin/activate 
+```
+Navigate to the examples folder:
+```sh
+  cd examples
+  ```
+Launch cfbridge:
+```sh
+  python cfbridge.py <Port number>
+```
+---
 ## Development
 ### Developing for the cfclient
 * [Fork the cflib](https://help.github.com/articles/fork-a-repo/)
@@ -53,33 +104,6 @@ work needed to maintain your python environmet.
 * Test package in python3.6 `TOXENV=py36 tox`
 
 Note: You must have the specific python versions on your machine or tests will fail. (ie. without specifying the TOXENV, `tox` runs tests for python2.7, 3.3, 3.4 and would require all python versions to be installed on the machine.)
-
-
-## Platform notes
-
-### Linux
-
-#### Setting udev permissions
-
-The following steps make it possible to use the USB Radio without being root.
-
-```
-sudo groupadd plugdev
-sudo usermod -a -G plugdev <username>
-```
-
-Create a file named ```/etc/udev/rules.d/99-crazyradio.rules``` and add the
-following:
-```
-SUBSYSTEM=="usb", ATTRS{idVendor}=="1915", ATTRS{idProduct}=="7777", MODE="0664", GROUP="plugdev"
-```
-
-To connect Crazyflie 2.0 via usb, create a file name ```/etc/udev/rules.d/99-crazyflie.rules``` and add the following:
-```
-SUBSYSTEM=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="5740", MODE="0664", GROUP="plugdev"
-```
-
-[cfclient]: https://www.github.com/bitcraze/crazyflie-clients-python
 
 
 ## Contribute
