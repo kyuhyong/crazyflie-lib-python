@@ -87,6 +87,9 @@ class RadioBridge:
             for i in range(0, len(data), 30):
                 self._forward(data[i:(i+30)])
 
+            if self.is_connected == False:
+                sys.exit(1)
+
     def _stab_log_error(self, logconf, msg):
         """Callback from the log API when an error occurs"""
         print('Error when logging %s: %s' % (logconf.name, msg))
@@ -105,6 +108,7 @@ class RadioBridge:
         """Callback when disconnected after a connection has been made (i.e
         Crazyflie moves out of range)"""
         print('Connection to %s lost: %s' % (link_uri, msg))
+        self.is_connected = False
 
     def _disconnected(self, link_uri):
         """Callback when the Crazyflie is disconnected (called in all cases)"""
